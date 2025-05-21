@@ -1,4 +1,5 @@
 use crate::cell::{Cell, CellType};
+use rand::Rng;
 
 const NEIGHBOUR_COORDINATES_OFFSETS: [(i16, i16); 8] = [
     (-1, -1),
@@ -32,23 +33,22 @@ impl Grid {
             width,
             height,
         }
-        // let cells = vec![Cell::default(); (width * height) as usize];
-        //
-        // Grid {
-        //     cells,
-        //     width,
-        //     height,
-        // }
     }
 
+    // Here, should randomly set some cells to live
     pub fn init(&mut self) {
-        let mid_x = self.width / 2;
-        let mid_y = self.height / 2;
-        let middle_cell_idx = (mid_y * self.width + mid_x) as usize;
+        let mut rng = rand::rng();
+        let mut count = 0;
 
-        let middle_cell: Cell = self.cells[middle_cell_idx];
+        for cell in &mut self.cells {
+            // 10% chance
+            if rng.random_bool(0.1) {
+                *cell = cell.get_live();
+                count += 1;
+            }
+        }
 
-        self.cells[middle_cell_idx] = middle_cell.get_live();
+        println!("Set {} cells to live", count);
     }
 
     pub fn get_all_neighbors(&self, cur_cell: Cell) -> [Option<Cell>; 8] {
@@ -77,7 +77,7 @@ impl Grid {
             }
         }
 
-        println!("Found {} live neighbors", count);
+        // println!("Found {} live neighbors", count);
 
         count
     }
@@ -87,6 +87,14 @@ impl Grid {
 
         for i in 0..self.cells.len() {
             let cur_cell = self.cells[i];
+
+            // let liveness = matches!(cur_cell.cell_type, CellType::LiveCell);
+
+            // println!(
+            //     "Checking ({}, {}) with liveness set to {}",
+            //     cur_cell.x, cur_cell.y, liveness
+            // );
+
             let num_alive = self.get_num_neighbors_alive(cur_cell);
 
             let new_cell = match cur_cell.cell_type {

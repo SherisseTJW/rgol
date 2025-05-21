@@ -60,8 +60,8 @@ impl EventHandler for GameState {
             if let CellType::LiveCell = cur_cell.cell_type {
                 let (x, y) = cur_cell.get_coordinates();
                 let rect = Rect::new(
-                    x as f32,
-                    y as f32,
+                    x as f32 * GRID_CELL_SIZE.0 as f32,
+                    y as f32 * GRID_CELL_SIZE.1 as f32,
                     GRID_CELL_SIZE.0 as f32,
                     GRID_CELL_SIZE.1 as f32,
                 );
@@ -80,6 +80,8 @@ impl EventHandler for GameState {
 
         // Calculate the time taken to render the frame
         let elapsed = start_time.elapsed();
+
+        // println!("Finished drawing");
 
         // Sleep the remaining time to achieve the target frame rate
         if elapsed < frame_duration {
